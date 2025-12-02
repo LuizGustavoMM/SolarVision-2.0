@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS leituras_energia (
     hora TIME NOT NULL,
 
     -- valor em watts medidos em intervalo de 5 minutos
-    wats5min NUMERIC(12,4) NOT NULL,
+    wats5min NUMERIC(12,4) NOT NULL
 );
 
 -- Cria um índice na coluna de e-mail para logins mais rápidos
