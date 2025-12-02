@@ -42,7 +42,7 @@
       const errorMessage = document.getElementById('error-message');
       
       errorMessage.classList.add('d-none'); // Esconde o erro
-
+      
       try {
         const response = await fetch('/api/login', {
           method: 'POST',
@@ -52,16 +52,24 @@
           body: JSON.stringify({ email, senha })
         });
 
+        // 1. Lemos a resposta JSON aqui para poder acessar os dados do usuário
+        const data = await response.json();
+
         if (response.ok) {
-          // Sucesso! Redireciona para a home
+          // 2. Se o login for bem sucedido, salvamos o nome no localStorage
+          if (data.user && data.user.nome) {
+            localStorage.setItem('usuarioNome', data.user.nome);
+          }
+
+          // 3. Sucesso! Redireciona para a home
           window.location.href = '/home/home.html';
         } else {
           // Erro (e-mail ou senha errados)
-          const data = await response.json();
           errorMessage.textContent = data.message || 'E-mail ou senha incorretos.';
           errorMessage.classList.remove('d-none');
         }
       } catch (error) {
+        console.error(error);
         errorMessage.textContent = 'Erro de conexão. Tente novamente.';
         errorMessage.classList.remove('d-none');
       }
