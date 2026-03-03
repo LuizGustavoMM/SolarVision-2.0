@@ -30,17 +30,13 @@ services:
   # --- NOVO SERVIÇO DE AUTOMAÇÃO ---
   # Este container roda uma vez, insere os dados e desliga.
   seed-data:
-    build: ./backend # Usa a mesma imagem do backend (que já tem python)
+    build: ./data-seeder
     container_name: solarvision-seed
-    # Sobrescreve o comando padrão para rodar APENAS o script python
-    command: python3 inserirCSV.py
     environment:
       DB_USER: solarvision_user
       DB_HOST: postgres
       DB_DATABASE: solarvision_db
       DB_PASSWORD: your_strong_password
-    volumes:
-      - ./backend:/usr/src/app
     depends_on:
       - postgres
       - backend # Espera o backend subir (opcional, mas bom pra garantir ordem)
