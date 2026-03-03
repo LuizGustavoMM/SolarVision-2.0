@@ -73,7 +73,9 @@ app.get('/api/leituras', async (req, res) => {
         const { inicio, fim } = req.query;
 
         // CORREÇÃO: Usando a coluna 'dia'
-        let query = 'SELECT dia, hora, wats5min FROM leituras_energia';
+        // Delega ao PostgreSQL a formatação da data como string YYYY-MM-DD
+        // para evitar problemas de fuso horário causados pelo driver do pg/Date nativo do JS
+        let query = "SELECT TO_CHAR(dia, 'YYYY-MM-DD') as dia_str, hora, wats5min FROM leituras_energia";
         let params = [];
 
         if (inicio && fim) {
@@ -89,16 +91,8 @@ app.get('/api/leituras', async (req, res) => {
         const result = await pool.query(query, params);
         
         const dados = result.rows.map(row => {
-            // CORREÇÃO: Acessando row.dia (não row.data)
-            // O driver do PG pode retornar 'dia' como objeto Date ou string
-            const dateObj = new Date(row.dia);
-            
-            // Ajuste para evitar problemas de fuso horário na conversão simples
-            // Pegamos a parte da data YYYY-MM-DD
-            const diaStr = dateObj.toISOString().split('T')[0];
-            
-            // Combina dia e hora para criar o timestamp
-            const dateTimeStr = `${diaStr}T${row.hora}`;
+            // Combina dia_str e hora para criar o timestamp no formato ISO-8601 local
+            const dateTimeStr = `${row.dia_str}T${row.hora}`;
             
             return { 
                 x: new Date(dateTimeStr).getTime(), 
