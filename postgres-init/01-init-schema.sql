@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     -- Coluna do campo 'E-mail' do register.html e login.html
     email VARCHAR(255) UNIQUE NOT NULL,
     
-    -- Coluna para a senha (Armazenando TEXTO PURO para a POC)
+    -- Coluna para a senha (Armazenando HASH gerado pelo bcrypt)
     senha_hash VARCHAR(255) NOT NULL,
     
     -- Data de criação do registro
@@ -37,10 +37,13 @@ CREATE TABLE IF NOT EXISTS leituras_energia (
 -- Cria um índice na coluna de e-mail para logins mais rápidos
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
 
+-- Cria um índice composto na coluna de dia e hora para otimizar os relatórios
+CREATE INDEX IF NOT EXISTS idx_leituras_energia_dia_hora ON leituras_energia(dia, hora);
+
 -- ---
 -- (Opcional) Inserir um usuário de teste
 -- ---
--- Inserindo 'senha123' em texto puro na coluna 'senha_hash'
+-- Inserindo hash da senha na coluna 'senha_hash'
 -- ---
 -- INSERT INTO usuarios (nome, email, senha_hash) 
 -- VALUES (
